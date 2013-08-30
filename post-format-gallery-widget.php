@@ -85,17 +85,14 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	function widget( $args, $instance ) {	 
+		
 		extract($args);		
 		
 		if ( isset( $instance['post'] ) && $instance['post'] != -1 ) {
 		
 			$post_id = (int) $instance['post'];
-			$link_text = isset( $instance['link-text'] ) ? strip_tags( $instance['link-text'] ) : apply_filters( 'pfgw_link_text', __( 'Continue reading', 'post-format-gallery-widget' ) );
+			$gallery_style = $instance['gallery-style'] ? true : false;
 			$image_size = isset( $instance['image-size'] ) ? strip_tags( $instance['image-size'] ) : 'thumbnail';
-		
-			$p = new WP_Query( array( 'p' => $post_id ) );
-			
-			echo 'Post que queremos: '.$post_id;
 		
 			// Retrieve all galleries of this post as arrays
 			$galleries = get_post_galleries( $post_id, false );
@@ -114,17 +111,14 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 				
 				// Loop through all the galleries and store its IDs
 				foreach( $galleries as $gallery ) {
-				
-					$gallery_ids = explode( ',', $gallery['ids'] );
-				
-					$gallery_post_ids = array_merge( $gallery_post_ids, $gallery_ids );
-			
+					if ( array_key_exists( 'ids', $gallery ) ) {
+						$gallery_ids = explode( ',', $gallery['ids'] );			
+						$gallery_post_ids = array_merge( $gallery_post_ids, $gallery_ids );
+					}
 				}
 				
 				// Remove repeated IDs
 				$gallery_post_ids = array_unique( $gallery_post_ids );
-				
-				print_r($gallery_post_ids);
 			
 				/*
 				$query_images_args = array(
@@ -136,29 +130,38 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 					'posts_per_page' => -1,
 				); */
 				
-				// Search for attachments that are part of a gallery
-				$query_images_args = array( 
-					'post_type' 	=> 'attachment',
-					'post_status' 	=> 'inherit',
-					'post__in' 		=> $gallery_post_ids
-				);
+				if ( ! empty ( $gallery_post_ids ) ) {
 				
-				$query_images = new WP_Query( $query_images_args );
-
-				if ( $query_images->have_posts() ) : while( $query_images->have_posts() ) : $query_images->the_post();
+					// Will it use the default WordPress gallery style or not?
+					if ( $gallery_style === true ) {
+						echo do_shortcode( '[gallery ids="'. implode( ',', $gallery_post_ids) . '" columns="2" size="' . $image_size . '" captiontag="none"]' );
+					}
+					else {
+						// Search for attachments that are part of a gallery
+						$query_images_args = array( 
+							'post_type' 	=> 'attachment',
+							'post_status' 	=> 'inherit',
+							'post__in' 		=> $gallery_post_ids
+						);
 						
-						global $post;
-						
-						$image = wp_get_attachment_image_src( get_the_ID(), $image_size );
-						$image['ID'] = get_the_ID();
-						$image['title'] = get_the_title();
-						$image['caption'] = $post->post_excerpt;
-						$image['parent'] = $post->post_parent;
-						$images[] = $image;
-						
-						echo '<img src="'. $image[0] . '" />';
-						
-				endwhile; endif;
+						$query_images = new WP_Query( $query_images_args );
+		
+						if ( $query_images->have_posts() ) : while( $query_images->have_posts() ) : $query_images->the_post();
+								
+							global $post;
+							
+							$image = wp_get_attachment_image_src( get_the_ID(), $image_size );
+							$image['ID'] = get_the_ID();
+							$image['title'] = get_the_title();
+							$image['caption'] = $post->post_excerpt;
+							$image['parent'] = $post->post_parent;
+							$images[] = $image;
+							
+							echo '<img src="'. $image[0] . '" />';
+								
+						endwhile; endif;
+					}
+				}
 				
 				echo $after_widget;
 	
@@ -167,13 +170,14 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			}
 		}
 	}
+	
 
 	function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
 		$instance['title'] = strip_tags( $new_instance['title'] );
 		$instance['post'] = (int)( $new_instance['post'] );
 		$instance['image-size'] = strip_tags( $new_instance['image-size'] );
-		$instance['link-text'] = strip_tags( $new_instance['link-text'] );
+		$instance['gallery-style'] = $new_instance['gallery-style'] ? true : false;
 		
 		return $instance;
 	}
@@ -182,11 +186,9 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 	
 		// Check if theme has support to post format gallery
 		if ( current_theme_supports( 'post-formats' ) ) {  
-
 		    $post_formats = get_theme_support( 'post-formats' );  
 		    
 		    if ( is_array( $post_formats[0] ) && ! in_array( 'gallery', $post_formats[0] ) ) {
-					
 				_e( 'Your theme does not support the Gallery post format. Please <a href="http://codex.wordpress.org/Post_Formats#Adding_Theme_Support">add this support</a> so you can choose your posts.', 'post-format-gallery-widget' );
 				return;
 		    }  
@@ -195,8 +197,9 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		$title = isset( $instance['title'] ) ? strip_tags( $instance['title'] ) : '';
 		$p = isset( $instance['post'] ) ? (int) $instance['post'] : 0;
 		$image_size = isset( $instance['image-size'] ) ? strip_tags( $instance['image-size'] ) : 'thumbnail';
-		$link_text = isset( $instance['link-text'] ) ? strip_tags( $instance['link-text'] ) : apply_filters( 'pfgw_link_text', __( 'Continue reading', 'post-format-gallery-widget' ) );
+		$gallery_style = $instance['gallery-style'] ? true : false;
 		?>
+		
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php _e( 'Title:', 'post-format-gallery-widget' ); ?></label>
 			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
@@ -231,9 +234,8 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			</select>
 		</p>
 		<p>
-			<label for="<?php echo esc_attr( $this->get_field_id( 'link-text' ) ); ?>"><?php _e( 'Link text:', 'post-format-gallery-widget' ); ?></label>
-			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'link-text' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'link-text' ) ); ?>" type="text" value="<?php echo esc_attr( $link_text ); ?>" />
-			<small><?php _e( 'If empty, there will be no link to featured page.', 'post-format-gallery-widget' ); ?></small>
+			<input class="checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'gallery-style' ); ?>" name="<?php echo $this->get_field_name( 'gallery-style' ); ?>"<?php checked( $gallery_style ) ?> />
+			<label for="<?php echo $this->get_field_id( 'gallery-style' ); ?>"><?php _e( 'Use the WordPress default gallery style', 'post-format-gallery-widget' ); ?></label>
 		</p>
 	<?php
 	}
