@@ -36,18 +36,6 @@ function pfgw_load_textdomain() {
 add_action( 'plugins_loaded', 'pfgw_load_textdomain' );
 
 /**
- * Enqueue the stylesheet
- */
-function pfgw_enqueue_stylesheet() {
-
-	wp_register_style( 'post-format-gallery-widget', plugins_url( 'css/post-format-gallery-widget.css', __FILE__) );
-	wp_enqueue_style( 'post-format-gallery-widget' );
-	
-}
-
-//add_action( 'wp_enqueue_scripts', 'pfgw_enqueue_stylesheet' );
-
-/**
  * Register the widget
  */
 function pfgw_register_widget() {
@@ -86,13 +74,15 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 	 */
 	function widget( $args, $instance ) {	 
 		
-		extract($args);		
+		extract($args);
 		
 		if ( isset( $instance['post'] ) && $instance['post'] != -1 ) {
 		
 			$post_id = (int) $instance['post'];
 			$gallery_style = $instance['gallery-style'] ? true : false;
 			$image_size = isset( $instance['image-size'] ) ? strip_tags( $instance['image-size'] ) : 'thumbnail';
+			$number_images = $instance['number-images'];
+			$random_images = $instance['random-images'] ? true : false;
 		
 			// Retrieve all galleries of this post as arrays
 			$galleries = get_post_galleries( $post_id, false );
@@ -119,17 +109,15 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 				
 				// Remove repeated IDs
 				$gallery_post_ids = array_unique( $gallery_post_ids );
-			
-				/*
-				$query_images_args = array(
-					'post_type' => 'attachment',
-					'post_mime_type' => 'image',
-					'post_status' => 'inherit',
-					'orderby' => $args['orderby'],
-					'order' => $args['order'],
-					'posts_per_page' => -1,
-				); */
 				
+				// Limit the array when a number of images is set
+				if ( $number_images > 0 )
+					$gallery_post_ids = array_slice( $gallery_post_ids, 0, $number_images );
+
+				// Randomize images
+				if ( $random_images === true )
+					shuffle( $gallery_post_ids );
+					
 				if ( ! empty ( $gallery_post_ids ) ) {
 				
 					// Will it use the default WordPress gallery style or not?
@@ -141,8 +129,20 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 						$query_images_args = array( 
 							'post_type' 	=> 'attachment',
 							'post_status' 	=> 'inherit',
-							'post__in' 		=> $gallery_post_ids
+							'post__in' 		=> $gallery_post_ids,
+							'orderby'		=> 'post__in'
 						);
+						
+						/*
+						$query_images_args = array(
+							'post_type' => 'attachment',
+							'post_mime_type' => 'image',
+							'post_status' => 'inherit',
+							'orderby' => $args['orderby'],
+							'order' => $args['order'],
+							'posts_per_page' => -1,
+						); */
+				
 						
 						$query_images = new WP_Query( $query_images_args );
 		
@@ -177,6 +177,8 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		$instance['title'] = strip_tags( $new_instance['title'] );
 		$instance['post'] = (int)( $new_instance['post'] );
 		$instance['image-size'] = strip_tags( $new_instance['image-size'] );
+		$instance['number-images'] = absint ( $new_instance['number-images'] );
+		$instance['random-images'] = $new_instance['random-images'] ? true : false;
 		$instance['gallery-style'] = $new_instance['gallery-style'] ? true : false;
 		
 		return $instance;
@@ -197,6 +199,8 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		$title = isset( $instance['title'] ) ? strip_tags( $instance['title'] ) : '';
 		$p = isset( $instance['post'] ) ? (int) $instance['post'] : 0;
 		$image_size = isset( $instance['image-size'] ) ? strip_tags( $instance['image-size'] ) : 'thumbnail';
+		$number_images = isset( $instance['number-images'] ) ? absint( $instance['number-images'] ) : 0;
+		$random_images = $instance['random-images'] ? true : false;
 		$gallery_style = $instance['gallery-style'] ? true : false;
 		?>
 		
@@ -232,6 +236,15 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 					<option value="<?php echo $key; ?>" <?php selected( $image_size, $key ); ?>><?php echo $key; ?> (<?php echo $image_dimensions; ?>)</option>
 				<?php endforeach; ?>
 			</select>
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id( 'number-images' ); ?>"><?php _e( 'Number of images to show', 'post-format-gallery-widget' ); ?>:</label>
+			<input id="<?php echo $this->get_field_id( 'number-images' ); ?>" name="<?php echo $this->get_field_name( 'number-images' ); ?>" type="text" size="1" value="<?php echo esc_attr( $number_images ); ?>" /><br />
+			<small class="description"><?php _e( 'Enter 0 for all images', 'post-format-gallery-widget' ); ?></small>
+		</p>
+		<p>
+			<input class="checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'random-images' ); ?>" name="<?php echo $this->get_field_name( 'random-images' ); ?>"<?php checked( $random_images ) ?> />
+			<label for="<?php echo $this->get_field_id( 'random-images' ); ?>"><?php _e( 'Randomize images', 'post-format-gallery-widget' ); ?></label>
 		</p>
 		<p>
 			<input class="checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'gallery-style' ); ?>" name="<?php echo $this->get_field_name( 'gallery-style' ); ?>"<?php checked( $gallery_style ) ?> />
