@@ -1,5 +1,5 @@
 # Post Format Gallery Widget #
-*A WordPress widget that displays images from your galleries that are saved under the Gallery post format.*  
+*A WordPress widget to display images from your galleries that are saved under the Gallery post format.*  
 
 ## Installation ##
 
