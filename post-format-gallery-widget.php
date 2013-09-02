@@ -89,12 +89,12 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			
 			if ( ! empty ( $galleries ) ) {
 				
-				$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? get_the_title( $post_id ) : $instance['title'], $instance, $this->id_base );
+				$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'], $instance, $this->id_base );
 				
 				echo $before_widget;
-				echo $before_title;
-				echo $title;
-				echo $after_title;
+				
+				if ( ! empty ( $title ) )
+					echo $before_title . $title . $after_title;
 			
 				// The IDs from attachments whitin a gallery
 				$gallery_post_ids = array();
