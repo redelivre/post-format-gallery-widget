@@ -47,8 +47,8 @@ function pfgw_register_widget() {
 add_action( 'widgets_init', 'pfgw_register_widget' );
 
 /**
- * A Featured Page Widget
- * Feature a page, showing its excerpt and thumbnail.
+ * Post Format Gallery Widget
+ * Display images from your galleries that are saved under the Gallery post format.
  *
  */
 class Post_Format_Gallery_Widget extends WP_Widget {
