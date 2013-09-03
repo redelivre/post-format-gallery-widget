@@ -83,6 +83,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			$image_size = isset( $instance['image-size'] ) ? strip_tags( $instance['image-size'] ) : 'thumbnail';
 			$number_images = $instance['number-images'];
 			$random_images = $instance['random-images'] ? true : false;
+			$number_columns = (int) $instance['number-columns'];
 		
 			// Retrieve all galleries of this post as arrays
 			$galleries = get_post_galleries( $post_id, false );
@@ -122,7 +123,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 				
 					// Will it use the default WordPress gallery style or not?
 					if ( $gallery_style === true ) {
-						echo do_shortcode( '[gallery ids="'. implode( ',', $gallery_post_ids) . '" columns="2" size="' . $image_size . '" captiontag="none"]' );
+						echo do_shortcode( '[gallery ids="'. implode( ',', $gallery_post_ids) . '" columns="' . $number_columns . '" size="' . $image_size . '" captiontag="none"]' );
 					}
 					else {
 						// Search for attachments that are part of a gallery
@@ -180,6 +181,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		$instance['number-images'] = absint ( $new_instance['number-images'] );
 		$instance['random-images'] = $new_instance['random-images'] ? true : false;
 		$instance['gallery-style'] = $new_instance['gallery-style'] ? true : false;
+		$instance['number-columns'] = (int)( $new_instance['number-columns'] );
 		
 		return $instance;
 	}
@@ -202,6 +204,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		$number_images = isset( $instance['number-images'] ) ? absint( $instance['number-images'] ) : 0;
 		$random_images = $instance['random-images'] ? true : false;
 		$gallery_style = $instance['gallery-style'] ? true : false;
+		$number_columns = isset( $instance['number-columns'] ) ? (int) $instance['number-columns'] : 1;
 		?>
 		
 		<p>
@@ -249,6 +252,16 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		<p>
 			<input class="checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'gallery-style' ); ?>" name="<?php echo $this->get_field_name( 'gallery-style' ); ?>"<?php checked( $gallery_style ) ?> />
 			<label for="<?php echo $this->get_field_id( 'gallery-style' ); ?>"><?php _e( 'Use the WordPress default gallery style', 'post-format-gallery-widget' ); ?></label>
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id( 'number-columns' ); ?>"><?php _e( 'Number of columns:', 'post-format-gallery-widget' ); ?></label>
+			<select id="<?php echo $this->get_field_id( 'number-columns' ); ?>" name="<?php echo $this->get_field_name( 'number-columns' ); ?>">
+				<?php
+				for ( $columns = 1; $columns < 10; $columns++ ) :
+				?>
+					<option value="<?php echo $columns; ?>" <?php selected( $number_columns, $columns ); ?>><?php echo $columns; ?></option>
+				<?php endfor; ?>
+			</select>
 		</p>
 	<?php
 	}
