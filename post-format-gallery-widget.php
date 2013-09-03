@@ -2,7 +2,7 @@
 /*
 Plugin Name: Post Format Gallery Widget
 Plugin URI: http://github.com/eduardozulian/post-format-gallery-widget
-Description: Show images of your posts inside the post format "Gallery" in your widget area.
+Description: Display images from your galleries that are saved under the Gallery post format.
 Version: 0.1
 Author: Eduardo Zulian
 Author URI: http://flutuante.com.br
