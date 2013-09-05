@@ -36,6 +36,18 @@ function pfgw_load_textdomain() {
 add_action( 'plugins_loaded', 'pfgw_load_textdomain' );
 
 /**
+ * Enqueue scripts
+ */ 
+function pfgw_enqueue_scripts( $hook ) {
+	
+	if ( $hook === 'widgets.php' )
+		wp_enqueue_script( 'post-format-gallery-widget', plugins_url( 'js/post-format-gallery-widget.js', __FILE__ ), array( 'jquery' ) );
+		
+}
+
+add_action( 'admin_enqueue_scripts', 'pfgw_enqueue_scripts' );
+
+/**
  * Register the widget
  */
 function pfgw_register_widget() {
@@ -59,9 +71,10 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			__( 'Post Format Gallery Widget', 'post-format-gallery-widget' ),
 			array(
 				'classname' => 'widget_post_format_gallery',
-				'description' => __( 'Show images of your posts inside the post format "Gallery" in your widget area.', 'post-format-gallery-widget' )
+				'description' => __( 'Display images from your galleries that are saved under the Gallery post format.', 'post-format-gallery-widget' )
 			)
 		);
+		
 	}
 
 	/**
@@ -73,7 +86,6 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	function widget( $args, $instance ) {	 
-		
 		extract($args);
 		
 		if ( isset( $instance['post'] ) && $instance['post'] != -1 ) {
@@ -250,9 +262,10 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			<label for="<?php echo $this->get_field_id( 'random-images' ); ?>"><?php _e( 'Randomize images', 'post-format-gallery-widget' ); ?></label>
 		</p>
 		<p>
-			<input class="checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'gallery-style' ); ?>" name="<?php echo $this->get_field_name( 'gallery-style' ); ?>"<?php checked( $gallery_style ) ?> />
+			<input class="wp-gallery-style-checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'gallery-style' ); ?>" name="<?php echo $this->get_field_name( 'gallery-style' ); ?>"<?php checked( $gallery_style ) ?> />
 			<label for="<?php echo $this->get_field_id( 'gallery-style' ); ?>"><?php _e( 'Use the WordPress default gallery style', 'post-format-gallery-widget' ); ?></label>
 		</p>
+		<div class="wp-gallery-style-options">
 		<p>
 			<label for="<?php echo $this->get_field_id( 'number-columns' ); ?>"><?php _e( 'Number of columns:', 'post-format-gallery-widget' ); ?></label>
 			<select id="<?php echo $this->get_field_id( 'number-columns' ); ?>" name="<?php echo $this->get_field_name( 'number-columns' ); ?>">
@@ -263,6 +276,8 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 				<?php endfor; ?>
 			</select>
 		</p>
+		</div>
+		
 	<?php
 	}
 	
