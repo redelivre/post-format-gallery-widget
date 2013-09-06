@@ -214,8 +214,8 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		$p = isset( $instance['post'] ) ? (int) $instance['post'] : 0;
 		$image_size = isset( $instance['image-size'] ) ? strip_tags( $instance['image-size'] ) : 'thumbnail';
 		$number_images = isset( $instance['number-images'] ) ? absint( $instance['number-images'] ) : 0;
-		$random_images = $instance['random-images'] ? true : false;
-		$gallery_style = $instance['gallery-style'] ? true : false;
+		$random_images = ( isset( $instance['random-images'] ) && ( $instance['random-images'] ) ) ? true : false;
+		$gallery_style = ( isset( $instance['gallery-style'] ) && ( $instance['gallery-style'] ) ) ? true : false;
 		$number_columns = isset( $instance['number-columns'] ) ? (int) $instance['number-columns'] : 1;
 		?>
 		
