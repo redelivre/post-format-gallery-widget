@@ -18,6 +18,5 @@ This plugin allows you to select posts from the post format Gallery and display 
 
 ## Frequently Asked Questions ##
 
-### The widget only shows this  message: 
-
-Sure you can! Just call [`the_widget()`](http://codex.wordpress.org/Function_Reference/the_widget) wherever you want to display your featured page. If you want to customize it, there's four arguments:
+### The widget only shows this message: "Your theme does not support the Gallery post format. Please add this support so you can choose your posts." ###
+Yes, that's it. You have to [enable support for the gallery post format](http://codex.wordpress.org/Post_Formats#Adding_Theme_Support) on your theme. This plugin will only search for galleries inside a post saved under the post format Gallery.
