@@ -15,3 +15,9 @@ This plugin allows you to select posts from the post format Gallery and display 
 1. Upload `post-format-gallery-widget` directory to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Go to 'Widgets' menu and drag it to your sidebar
+
+## Frequently Asked Questions ##
+
+### The widget only shows this  message: 
+
+Sure you can! Just call [`the_widget()`](http://codex.wordpress.org/Function_Reference/the_widget) wherever you want to display your featured page. If you want to customize it, there's four arguments:
