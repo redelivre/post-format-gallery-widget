@@ -135,7 +135,11 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 				
 					// Will it use the default WordPress gallery style or not?
 					if ( $gallery_style === true ) {
-						echo do_shortcode( '[gallery ids="'. implode( ',', $gallery_post_ids) . '" columns="' . $number_columns . '" size="' . $image_size . '" captiontag="none"]' );
+						echo gallery_shortcode( array( 
+							'ids'		=> implode( ',', $gallery_post_ids),
+							'columns'	=> $number_columns,
+							'size'		=> $image_size
+						) );
 					}
 					else {
 						// Search for attachments that are part of a gallery
