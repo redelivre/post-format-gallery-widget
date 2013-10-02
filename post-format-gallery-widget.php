@@ -93,6 +93,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			$post_id = (int) $instance['post'];
 			$gallery_style = $instance['gallery-style'] ? true : false;
 			$image_size = isset( $instance['image-size'] ) ? strip_tags( $instance['image-size'] ) : 'thumbnail';
+			$image_link = isset( $instance['image-link'] ) ? $instance['image-link'] : 'file';
 			$number_images = $instance['number-images'];
 			$random_images = $instance['random-images'] ? true : false;
 			$number_columns = (int) $instance['number-columns'];
@@ -138,7 +139,8 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 						echo gallery_shortcode( array( 
 							'ids'		=> implode( ',', $gallery_post_ids),
 							'columns'	=> $number_columns,
-							'size'		=> $image_size
+							'size'		=> $image_size,
+							'link'		=> $image_link
 						) );
 					}
 					else {
@@ -193,7 +195,8 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		$instance = $old_instance;
 		$instance['title'] = strip_tags( $new_instance['title'] );
 		$instance['post'] = (int)( $new_instance['post'] );
-		$instance['image-size'] = strip_tags( $new_instance['image-size'] );
+		$instance['image-size'] = $new_instance['image-size'];
+		$instance['image-link'] = $new_instance['image-link'];
 		$instance['number-images'] = absint ( $new_instance['number-images'] );
 		$instance['random-images'] = $new_instance['random-images'] ? true : false;
 		$instance['gallery-style'] = $new_instance['gallery-style'] ? true : false;
@@ -204,7 +207,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 
 	function form( $instance ) {
 	
-		// Check if theme has support to post format gallery
+		// Check if theme supports post format gallery
 		if ( current_theme_supports( 'post-formats' ) ) {  
 		    $post_formats = get_theme_support( 'post-formats' );  
 		    
@@ -217,6 +220,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		$title = isset( $instance['title'] ) ? strip_tags( $instance['title'] ) : '';
 		$p = isset( $instance['post'] ) ? (int) $instance['post'] : 0;
 		$image_size = isset( $instance['image-size'] ) ? strip_tags( $instance['image-size'] ) : 'thumbnail';
+		$image_link = isset( $instance['image-link'] ) ? $instance['image-link'] : 'file';
 		$number_images = isset( $instance['number-images'] ) ? absint( $instance['number-images'] ) : 0;
 		$random_images = ( isset( $instance['random-images'] ) && ( $instance['random-images'] ) ) ? true : false;
 		$gallery_style = ( isset( $instance['gallery-style'] ) && ( $instance['gallery-style'] ) ) ? true : false;
@@ -260,6 +264,21 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			<label for="<?php echo $this->get_field_id( 'number-images' ); ?>"><?php _e( 'Number of images to show', 'post-format-gallery-widget' ); ?>:</label>
 			<input id="<?php echo $this->get_field_id( 'number-images' ); ?>" name="<?php echo $this->get_field_name( 'number-images' ); ?>" type="text" size="1" value="<?php echo esc_attr( $number_images ); ?>" /><br />
 			<small class="description"><?php _e( 'Enter 0 for all images', 'post-format-gallery-widget' ); ?></small>
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id( 'image-link' ); ?>"><?php _e( 'Image links to:', 'post-format-gallery-widget' ); ?></label>
+			<?php
+			$image_link_options = apply_filters( 'pfgw_image_link_options', array (
+				__( 'File', 'post-format-gallery-widget' ) 			=> 'file',
+				__( 'Attachment', 'post-format-gallery-widget' ) 	=> 'attachment',
+				__( 'None', 'post-format-gallery-widget' ) 			=> 'none'
+			) );
+			?>
+			<select class="widefat" id="<?php echo $this->get_field_id( 'image-link' ); ?>" name="<?php echo $this->get_field_name( 'image-link' ); ?>">
+				<?php foreach ( $image_link_options as $image_link_name => $image_link_value ) : ?>
+					<option value="<?php echo $image_link_value; ?>" <?php selected( $image_link, $image_link_value ); ?>><?php echo $image_link_name; ?></option>
+				<?php endforeach; ?>
+			</select>
 		</p>
 		<p>
 			<input class="checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'random-images' ); ?>" name="<?php echo $this->get_field_name( 'random-images' ); ?>"<?php checked( $random_images ) ?> />
