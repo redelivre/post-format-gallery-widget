@@ -14,23 +14,23 @@ jQuery(document).ready(function(){
 			split = pairs[i].split('=');
 			request[decodeURIComponent(split[0])] = decodeURIComponent(split[1]);
 			
-			// Search for gallery-style checkbox
-			if ( decodeURIComponent(split[0]).search('gallery-style') > -1 )
+			// Search for use-gallery-style checkbox
+			if ( decodeURIComponent(split[0]).search('use-gallery-style') > -1 )
 				galleryStyle = true;
 		}
 		
 		if ( request['action'] && request['action'] === 'save-widget' && request['id_base'] === 'post-format-gallery-widget' ) {
 			
 			if ( galleryStyle === true )
-				jQuery('[id$="' + request['widget-id'] + '"]' + ' .wp-gallery-style-options').show();
+				jQuery('[id$="' + request['widget-id'] + '"]' + ' .wp-use-gallery-style-options').show();
 			else
-				jQuery('[id$="' + request['widget-id'] + '"]' + ' .wp-gallery-style-options').hide();
+				jQuery('[id$="' + request['widget-id'] + '"]' + ' .wp-use-gallery-style-options').hide();
 
 		}
 	
 	});
 
-	jQuery('body').on('change', '.wp-gallery-style-checkbox', function(){
+	jQuery('body').on('change', '.wp-use-gallery-style-checkbox', function(){
 		
 		var $wpgs = jQuery(this);
 		
@@ -43,6 +43,6 @@ jQuery(document).ready(function(){
 	});
 	
 	// Trigger change to verify the checkboxes
-	jQuery('.wp-gallery-style-checkbox').trigger('change');
+	jQuery('.wp-use-gallery-style-checkbox').trigger('change');
 	
 });

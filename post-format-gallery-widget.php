@@ -91,7 +91,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		if ( isset( $instance['post'] ) && $instance['post'] != -1 ) {
 		
 			$post_id = (int) $instance['post'];
-			$gallery_style = $instance['gallery-style'] ? true : false;
+			$use_gallery_style = $instance['use-gallery-style'] ? true : false;
 			$image_size = isset( $instance['image-size'] ) ? strip_tags( $instance['image-size'] ) : 'thumbnail';
 			$image_link = isset( $instance['image-link'] ) ? $instance['image-link'] : 'file';
 			$number_images = $instance['number-images'];
@@ -127,59 +127,116 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 				// Limit the array when a number of images is set
 				if ( $number_images > 0 )
 					$gallery_post_ids = array_slice( $gallery_post_ids, 0, $number_images );
-
-				// Randomize images
-				if ( $random_images === true )
-					shuffle( $gallery_post_ids );
 					
-				if ( ! empty ( $gallery_post_ids ) ) {
+				if ( ! empty ( $gallery_post_ids ) ) {					
+					
+					static $instance = 0;
+					$instance++;
 				
-					// Will it use the default WordPress gallery style or not?
-					if ( $gallery_style === true ) {
-						echo gallery_shortcode( array( 
-							'ids'		=> implode( ',', $gallery_post_ids),
-							'columns'	=> $number_columns,
-							'size'		=> $image_size,
-							'link'		=> $image_link
-						) );
+					$id = intval($id);
+					
+					$_attachments = get_posts( array(
+						'include' 			=> implode( ',', $gallery_post_ids ),
+						'post_status' 		=> 'inherit',
+						'post_type' 		=> 'attachment',
+						'post_mime_type'	=> 'image',
+						'orderby'			=> ( $random_images === true ) ? 'rand' : 'none'
+					) );
+
+					$attachments = array();
+					foreach ( $_attachments as $key => $val ) {
+						$attachments[$val->ID] = $_attachments[$key];
 					}
-					else {
-						// Search for attachments that are part of a gallery
-						$query_images_args = array( 
-							'post_type' 	=> 'attachment',
-							'post_status' 	=> 'inherit',
-							'post__in' 		=> $gallery_post_ids,
-							'orderby'		=> 'post__in'
-						);
-						
-						/*
-						$query_images_args = array(
-							'post_type' => 'attachment',
-							'post_mime_type' => 'image',
-							'post_status' => 'inherit',
-							'orderby' => $args['orderby'],
-							'order' => $args['order'],
-							'posts_per_page' => -1,
-						); */
 				
+	
+					if ( empty($attachments) )
+						return '';
+					
+					/* Using WP column function */ 
+					$number_columns = intval( $number_columns );
+					$itemwidth = $number_columns > 0 ? floor( 100 / $number_columns ) : 100;
+					$float = is_rtl() ? 'right' : 'left';
+				
+					$selector = "gallery-{$instance}";
+					
+					$gallery_style = $gallery_div = '';
+					
+					if ( $use_gallery_style === true ) {
 						
-						$query_images = new WP_Query( $query_images_args );
-		
-						if ( $query_images->have_posts() ) : while( $query_images->have_posts() ) : $query_images->the_post();
-								
-							global $post;
+						$gallery_style = "
+						<style type='text/css'>
+							#{$selector} {
+								margin: auto;
+							}
+							#{$selector} .gallery-item {
+								float: {$float};
+								margin-top: 10px;
+								text-align: center;
+								width: {$itemwidth}%;
+							}
+							#{$selector} img {
+								border: 2px solid #cfcfcf;
+							}
+							#{$selector} .gallery-caption {
+								margin-left: 0;
+							}
+							/* see gallery_shortcode() in wp-includes/media.php */
+						</style>";
+					}	
+						
+					$gallery_div = "<div id='$selector' class='gallery galleryid-{$id} gallery-columns-{$number_columns} gallery-size-{$image_size}'>";
+					
+					$output = $gallery_style . "\n\t\t" . $gallery_div;
+				
+					$i = 0;
+					
+					foreach ( $attachments as $id => $attachment ) {
+					
+						// Link target
+						switch ( $image_link ) {
 							
-							$image = wp_get_attachment_image_src( get_the_ID(), $image_size );
-							$image['ID'] = get_the_ID();
-							$image['title'] = get_the_title();
-							$image['caption'] = $post->post_excerpt;
-							$image['parent'] = $post->post_parent;
-							$images[] = $image;
+							case 'file' :
+								$image_output = wp_get_attachment_link( $id, $image_size, false, false );
+							break;
 							
-							echo '<img src="'. $image[0] . '" />';
-								
-						endwhile; endif;
+							case 'attachment' :
+								$image_output = wp_get_attachment_link( $id, $image_size, true, false );
+							break;
+							
+							case 'none' :
+								$image_output = wp_get_attachment_image( $id, $image_size, false );
+							break;
+							
+						}
+				
+						$image_meta  = wp_get_attachment_metadata( $id );
+				
+						$orientation = '';
+						if ( isset( $image_meta['height'], $image_meta['width'] ) )
+							$orientation = ( $image_meta['height'] > $image_meta['width'] ) ? 'portrait' : 'landscape';
+				
+						$output .= "<dl class='gallery-item'>";
+						$output .= "
+							<dt class='gallery-icon {$orientation}'>
+								$image_output
+							</dt>";
+						if ( trim( $attachment->post_excerpt ) ) {
+							$output .= "
+								<dd class='wp-caption-text gallery-caption'>
+								" . wptexturize( $attachment->post_excerpt ) . "
+								</dd>";
+						}
+						$output .= "</dl>";
+						if ( $number_columns > 0 && ++$i % $number_columns == 0 )
+							$output .= '<br style="clear: both" />';
 					}
+				
+					$output .= "
+							<br style='clear: both;' />
+						</div>\n";
+						
+					echo $output;
+					
 				}
 				
 				echo $after_widget;
@@ -199,7 +256,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		$instance['image-link'] = $new_instance['image-link'];
 		$instance['number-images'] = absint ( $new_instance['number-images'] );
 		$instance['random-images'] = $new_instance['random-images'] ? true : false;
-		$instance['gallery-style'] = $new_instance['gallery-style'] ? true : false;
+		$instance['use-gallery-style'] = $new_instance['use-gallery-style'] ? true : false;
 		$instance['number-columns'] = (int)( $new_instance['number-columns'] );
 		
 		return $instance;
@@ -223,7 +280,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		$image_link = isset( $instance['image-link'] ) ? $instance['image-link'] : 'file';
 		$number_images = isset( $instance['number-images'] ) ? absint( $instance['number-images'] ) : 0;
 		$random_images = ( isset( $instance['random-images'] ) && ( $instance['random-images'] ) ) ? true : false;
-		$gallery_style = ( isset( $instance['gallery-style'] ) && ( $instance['gallery-style'] ) ) ? true : false;
+		$use_gallery_style = ( isset( $instance['use-gallery-style'] ) && ( $instance['use-gallery-style'] ) ) ? true : false;
 		$number_columns = isset( $instance['number-columns'] ) ? (int) $instance['number-columns'] : 1;
 		?>
 		
@@ -253,7 +310,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			<label for="<?php echo $this->get_field_id( 'image-size' ); ?>"><?php _e( 'Image size:', 'post-format-gallery-widget' ); ?></label>
 			<select class="widefat" id="<?php echo $this->get_field_id( 'image-size' ); ?>" name="<?php echo $this->get_field_name( 'image-size' ); ?>">
 				<?php
-				$all_image_sizes = $this->_get_all_image_sizes();
+				$all_image_sizes = $this->pfgw_get_all_image_sizes();
 				foreach ( $all_image_sizes as $key => $value ) :
 					$image_dimensions = $value['width'] . 'x' . $value['height']; ?>
 					<option value="<?php echo $key; ?>" <?php selected( $image_size, $key ); ?>><?php echo $key; ?> (<?php echo $image_dimensions; ?>)</option>
@@ -285,17 +342,15 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			<label for="<?php echo $this->get_field_id( 'random-images' ); ?>"><?php _e( 'Randomize images', 'post-format-gallery-widget' ); ?></label>
 		</p>
 		<p>
-			<input class="wp-gallery-style-checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'gallery-style' ); ?>" name="<?php echo $this->get_field_name( 'gallery-style' ); ?>"<?php checked( $gallery_style ) ?> />
-			<label for="<?php echo $this->get_field_id( 'gallery-style' ); ?>"><?php _e( 'Use the WordPress default gallery style', 'post-format-gallery-widget' ); ?></label>
+			<input class="wp-use-gallery-style-checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'use-gallery-style' ); ?>" name="<?php echo $this->get_field_name( 'use-gallery-style' ); ?>"<?php checked( $use_gallery_style ) ?> />
+			<label for="<?php echo $this->get_field_id( 'use-gallery-style' ); ?>"><?php _e( 'Use the WordPress default gallery style', 'post-format-gallery-widget' ); ?></label>
 		</p>
-		<div class="wp-gallery-style-options">
+		<div class="wp-use-gallery-style-options">
 		<p>
 			<label for="<?php echo $this->get_field_id( 'number-columns' ); ?>"><?php _e( 'Number of columns:', 'post-format-gallery-widget' ); ?></label>
 			<select id="<?php echo $this->get_field_id( 'number-columns' ); ?>" name="<?php echo $this->get_field_name( 'number-columns' ); ?>">
-				<?php
-				for ( $columns = 1; $columns < 10; $columns++ ) :
-				?>
-					<option value="<?php echo $columns; ?>" <?php selected( $number_columns, $columns ); ?>><?php echo $columns; ?></option>
+				<?php for ( $i = 1; $i < 10; $i++ ) : ?>
+				<option value="<?php echo $i; ?>" <?php selected( $number_columns, $i ); ?>><?php echo $i; ?></option>
 				<?php endfor; ?>
 			</select>
 		</p>
@@ -312,15 +367,15 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 	 * @link http://core.trac.wordpress.org/ticket/18947 Reference ticket
 	 * @return array $image_sizes The image sizes
 	 */
-	function _get_all_image_sizes() {
+	function pfgw_get_all_image_sizes() {
 		global $_wp_additional_image_sizes;
 
 		$default_image_sizes = array( 'thumbnail', 'medium', 'large' );
 		 
-		foreach ( $default_image_sizes as $size ) {
-			$image_sizes[$size]['width']	= intval( get_option( "{$size}_size_w") );
-			$image_sizes[$size]['height'] = intval( get_option( "{$size}_size_h") );
-			$image_sizes[$size]['crop']	= get_option( "{$size}_crop" ) ? get_option( "{$size}_crop" ) : false;
+		foreach ( $default_image_sizes as $image_size ) {
+			$image_sizes[$image_size]['width']	= intval( get_option( "{$image_size}_size_w") );
+			$image_sizes[$image_size]['height'] = intval( get_option( "{$image_size}_size_h") );
+			$image_sizes[$image_size]['crop']	= get_option( "{$image_size}_crop" ) ? get_option( "{$image_size}_crop" ) : false;
 		}
 		
 		if ( isset( $_wp_additional_image_sizes ) && count( $_wp_additional_image_sizes ) )
