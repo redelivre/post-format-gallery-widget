@@ -96,6 +96,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			$image_link = isset( $instance['image-link'] ) ? $instance['image-link'] : 'file';
 			$number_images = $instance['number-images'];
 			$random_images = $instance['random-images'] ? true : false;
+			$show_captions = $instance['show-captions'] ? true : false;
 			$number_columns = (int) $instance['number-columns'];
 		
 			// Retrieve all galleries of this post as arrays
@@ -220,7 +221,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 							<dt class='gallery-icon {$orientation}'>
 								$image_output
 							</dt>";
-						if ( trim( $attachment->post_excerpt ) ) {
+						if ( $show_captions === true && trim( $attachment->post_excerpt ) ) {
 							$output .= "
 								<dd class='wp-caption-text gallery-caption'>
 								" . wptexturize( $attachment->post_excerpt ) . "
@@ -256,6 +257,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		$instance['image-link'] = $new_instance['image-link'];
 		$instance['number-images'] = absint ( $new_instance['number-images'] );
 		$instance['random-images'] = $new_instance['random-images'] ? true : false;
+		$instance['show-captions'] = $new_instance['show-captions'] ? true : false;
 		$instance['use-gallery-style'] = $new_instance['use-gallery-style'] ? true : false;
 		$instance['number-columns'] = (int)( $new_instance['number-columns'] );
 		
@@ -280,6 +282,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		$image_link = isset( $instance['image-link'] ) ? $instance['image-link'] : 'file';
 		$number_images = isset( $instance['number-images'] ) ? absint( $instance['number-images'] ) : 0;
 		$random_images = ( isset( $instance['random-images'] ) && ( $instance['random-images'] ) ) ? true : false;
+		$show_captions = ( isset( $instance['show-captions'] ) && ( $instance['show-captions'] ) ) ? true : false;
 		$use_gallery_style = ( isset( $instance['use-gallery-style'] ) && ( $instance['use-gallery-style'] ) ) ? true : false;
 		$number_columns = isset( $instance['number-columns'] ) ? (int) $instance['number-columns'] : 1;
 		?>
@@ -340,6 +343,10 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		<p>
 			<input class="checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'random-images' ); ?>" name="<?php echo $this->get_field_name( 'random-images' ); ?>"<?php checked( $random_images ) ?> />
 			<label for="<?php echo $this->get_field_id( 'random-images' ); ?>"><?php _e( 'Randomize images', 'post-format-gallery-widget' ); ?></label>
+		</p>
+		<p>
+			<input class="checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'show-captions' ); ?>" name="<?php echo $this->get_field_name( 'show-captions' ); ?>"<?php checked( $show_captions ) ?> />
+			<label for="<?php echo $this->get_field_id( 'show-captions' ); ?>"><?php _e( 'Show captions', 'post-format-gallery-widget' ); ?></label>
 		</p>
 		<p>
 			<input class="wp-use-gallery-style-checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'use-gallery-style' ); ?>" name="<?php echo $this->get_field_name( 'use-gallery-style' ); ?>"<?php checked( $use_gallery_style ) ?> />
