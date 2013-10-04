@@ -145,12 +145,13 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 					) );
 
 					$attachments = array();
+					
 					foreach ( $_attachments as $key => $val ) {
 						$attachments[$val->ID] = $_attachments[$key];
 					}
 				
 	
-					if ( empty($attachments) )
+					if ( empty( $attachments ) )
 						return '';
 					
 					/* Using WP column function */ 
@@ -184,7 +185,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 							/* see gallery_shortcode() in wp-includes/media.php */
 						</style>";
 					}	
-						
+					
 					$gallery_div = "<div id='$selector' class='gallery galleryid-{$id} gallery-columns-{$number_columns} gallery-size-{$image_size}'>";
 					
 					$output = $gallery_style . "\n\t\t" . $gallery_div;
@@ -202,6 +203,10 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 							
 							case 'attachment' :
 								$image_output = wp_get_attachment_link( $id, $image_size, true, false );
+							break;
+							
+							case 'post' :
+								$image_output = '<a href="' . get_permalink( $post_id ) . '" title="' . get_the_title( $id ) . '">' . wp_get_attachment_image( $id, $image_size, false ) . '</a>';
 							break;
 							
 							case 'none' :
@@ -248,7 +253,6 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		}
 	}
 	
-
 	function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
 		$instance['title'] = strip_tags( $new_instance['title'] );
@@ -331,6 +335,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			$image_link_options = apply_filters( 'pfgw_image_link_options', array (
 				__( 'File', 'post-format-gallery-widget' ) 			=> 'file',
 				__( 'Attachment', 'post-format-gallery-widget' ) 	=> 'attachment',
+				__( 'Post', 'post-format-gallery-widget' ) 			=> 'post',
 				__( 'None', 'post-format-gallery-widget' ) 			=> 'none'
 			) );
 			?>
