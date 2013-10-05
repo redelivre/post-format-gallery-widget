@@ -133,8 +133,6 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 					
 					static $instance = 0;
 					$instance++;
-				
-					$id = intval($id);
 					
 					$_attachments = get_posts( array(
 						'include' 			=> implode( ',', $gallery_post_ids ),
@@ -186,7 +184,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 						</style>";
 					}	
 					
-					$gallery_div = "<div id='$selector' class='gallery galleryid-{$id} gallery-columns-{$number_columns} gallery-size-{$image_size}'>";
+					$gallery_div = "<div id='$selector' class='gallery gallery-columns-{$number_columns} gallery-size-{$image_size}'>";
 					
 					$output = $gallery_style . "\n\t\t" . $gallery_div;
 				
