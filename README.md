@@ -20,3 +20,23 @@ This plugin allows you to select posts from the post format Gallery and display 
 
 ### The widget only shows this message: "Your theme does not support the Gallery post format. Please add this support so you can choose your posts." ###
 Yes, that's it. You have to [enable support for the gallery post format](http://codex.wordpress.org/Post_Formats#Adding_Theme_Support) on your theme. This plugin will only search for galleries inside a post saved under the post format Gallery.
+
+### Can I add / remove / change gallery classes? ###
+Yes. Just use the `pfgw_gallery_classes` filter in your `functions.php` file:
+
+```
+/**
+ * Add a new class to the gallery container
+ *
+ * @param array $classes 
+ */
+function mytheme_change_pfgw_classes( $classes ) {
+
+	$classes[] = 'my-class';
+	
+	return $classes;
+
+}
+
+add_filter( 'pfgw_gallery_classes', 'mytheme_change_pfgw_classes' );
+```

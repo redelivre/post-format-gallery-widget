@@ -182,9 +182,11 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 							}
 							/* see gallery_shortcode() in wp-includes/media.php */
 						</style>";
-					}	
+					}
 					
-					$gallery_div = "<div id='$selector' class='gallery gallery-columns-{$number_columns} gallery-size-{$image_size}'>";
+					$gallery_classes = apply_filters( 'pfgw_gallery_classes', array( 'pfgw-gallery', 'gallery', 'gallery-columns-' . $number_columns, 'gallery-size-' . $image_size ) );
+					
+					$gallery_div = '<div id="' . $selector . '"' . ( ! empty( $gallery_classes ) ? ' class="'. implode( ' ', $gallery_classes ) . '"' : '' ) . '>';
 					
 					$output = $gallery_style . "\n\t\t" . $gallery_div;
 				
