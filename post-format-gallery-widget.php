@@ -125,6 +125,10 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 				// Remove repeated IDs
 				$gallery_post_ids = array_unique( $gallery_post_ids );
 				
+				// Shuffle images from all the galleries inside the post
+				if ( $random_images === true )
+					shuffle( $gallery_post_ids );
+				
 				// Limit the array when a number of images is set
 				if ( $number_images > 0 )
 					$gallery_post_ids = array_slice( $gallery_post_ids, 0, $number_images );
@@ -138,8 +142,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 						'include' 			=> implode( ',', $gallery_post_ids ),
 						'post_status' 		=> 'inherit',
 						'post_type' 		=> 'attachment',
-						'post_mime_type'	=> 'image',
-						'orderby'			=> ( $random_images === true ) ? 'rand' : 'none'
+						'post_mime_type'	=> 'image'
 					) );
 
 					$attachments = array();
