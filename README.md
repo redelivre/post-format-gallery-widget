@@ -31,12 +31,23 @@ Yes. Just use the `pfgw_gallery_classes` filter in your `functions.php` file:
  * @param array $classes 
  */
 function mytheme_change_pfgw_classes( $classes ) {
-
 	$classes[] = 'my-class';
-	
 	return $classes;
-
 }
-
 add_filter( 'pfgw_gallery_classes', 'mytheme_change_pfgw_classes' );
+```
+
+### Does it only work with posts? What about other post types? ###
+The default type is <code>post</code>. However, you can use `pfgw_post_types` filter in your `functions.php` file and then add or remove how many post types you wish. Just remember that [your theme must support](http://codex.wordpress.org/Post_Formats#Adding_Post_Type_Support) these post types as well.
+```
+/**
+ * Add another post type to our gallery query
+ *
+ * @param array $post_types The post types for the query 
+ */
+function mytheme_add_post_types( $post_types ) {
+	$post_types[] = 'page';
+	return $post_types;
+}
+add_filter( 'pfgw_post_types', 'mytheme_add_post_types' );
 ```

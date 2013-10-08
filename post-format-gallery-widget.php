@@ -278,7 +278,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		    $post_formats = get_theme_support( 'post-formats' );  
 		    
 		    if ( is_array( $post_formats[0] ) && ! in_array( 'gallery', $post_formats[0] ) ) {
-				_e( 'Your theme does not support the Gallery post format. Please <a href="http://codex.wordpress.org/Post_Formats#Adding_Theme_Support">add this support</a> so you can choose your posts.', 'post-format-gallery-widget' );
+				_e( 'Your theme does not support the Gallery post format. Please change your theme or <a href="http://codex.wordpress.org/Post_Formats#Adding_Theme_Support">add this support</a> to your current one so you can choose your posts.', 'post-format-gallery-widget' );
 				return;
 		    }  
 		} 
@@ -301,20 +301,31 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		<p>
 			<label for="<?php echo $this->get_field_id( 'post' ); ?>"><?php _e( 'Post:', 'post-format-gallery-widget' ); ?></label>
 			<?php
-	        $args = array( 
-	        	'post_format' => 'post-format-gallery'
+	        $args = array(
+	        	'post_status'	=> 'publish',
+	        	'post_type'		=> apply_filters( 'pfgw_post_types', array( 'post' ) ),
+	        	'post_format' 	=> 'post-format-gallery',
 	        );
+	        
+	        print_r($args);
 	
-	        $galleries = get_posts( $args );
-
-	        if ( ! empty( $galleries ) ) : ?>
-	            <select class="widefat" name="<?php echo $this->get_field_name( 'post' ); ?>" id="<?php echo $this->get_field_id( 'post' ); ?>">
-	            	<option value="-1"><?php _e( 'Select a post', 'post-format-gallery-widget' ); ?></option>
-	            	<?php foreach ( $galleries as $gallery ) : ?>
-	            	<option value="<?php echo $gallery->ID; ?>" <?php selected( $p, $gallery->ID ); ?>><?php echo $gallery->post_title; ?></option>
-	            	<?php endforeach; ?>
-	            </select>
-	        <?php endif; ?>
+	        $galleries = new WP_Query( $args );
+	        
+	        $output = '<select class="widefat" name="' . $this->get_field_name( 'post' ) . '" id="' . $this->get_field_id( 'post' ) . '">';
+	        $output .= '<option value="-1">' . __( 'Select a post', 'post-format-gallery-widget' ) . '</option>';
+	        
+	        if ( $galleries->have_posts() ) :
+	        	while ( $galleries->have_posts() ) : $galleries->the_post();
+	        		$output .= '<option value="' . get_the_ID() . '"' . selected( $p, get_the_ID(), false ) . '>'. get_the_title() . '</option>';
+				endwhile;
+	            $output .= '</select>';
+	        else :
+	        	$output .= '</select>';
+	        	$output .= '<br/><small class="description">' . __( 'You don\'t have any posts under the Gallery post format. Please add one.', 'post-format-gallery-widget') . '</small>';
+	        endif;
+	        
+	        echo $output;
+	        ?>
         </p>
 		<p>
 			<label for="<?php echo $this->get_field_id( 'image-size' ); ?>"><?php _e( 'Image size:', 'post-format-gallery-widget' ); ?></label>
@@ -329,7 +340,8 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		</p>
 		<p>
 			<label for="<?php echo $this->get_field_id( 'number-images' ); ?>"><?php _e( 'Number of images to show', 'post-format-gallery-widget' ); ?>:</label>
-			<input id="<?php echo $this->get_field_id( 'number-images' ); ?>" name="<?php echo $this->get_field_name( 'number-images' ); ?>" type="text" size="1" value="<?php echo esc_attr( $number_images ); ?>" /><br />
+			<input id="<?php echo $this->get_field_id( 'number-images' ); ?>" name="<?php echo $this->get_field_name( 'number-images' ); ?>" type="text" size="1" value="<?php echo esc_attr( $number_images ); ?>" />
+			<br />
 			<small class="description"><?php _e( 'Enter 0 for all images', 'post-format-gallery-widget' ); ?></small>
 		</p>
 		<p>
