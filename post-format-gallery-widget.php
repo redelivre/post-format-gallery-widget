@@ -2,8 +2,8 @@
 /*
 Plugin Name: Post Format Gallery Widget
 Plugin URI: http://github.com/eduardozulian/post-format-gallery-widget
-Description: Display images from your galleries that are saved under the Gallery post format.
-Version: 0.1
+Description: Display images from your galleries saved under the post format Gallery.
+Version: 1.0
 Author: Eduardo Zulian
 Author URI: http://flutuante.com.br
 License: GPL2
@@ -71,7 +71,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			__( 'Post Format Gallery Widget', 'post-format-gallery-widget' ),
 			array(
 				'classname' => 'widget_post_format_gallery',
-				'description' => __( 'Display images from your galleries that are saved under the Gallery post format.', 'post-format-gallery-widget' )
+				'description' => __( 'Display images from your galleries saved under the Gallery post format.', 'post-format-gallery-widget' )
 			)
 		);
 		
