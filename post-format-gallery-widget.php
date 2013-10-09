@@ -306,8 +306,6 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 	        	'post_type'		=> apply_filters( 'pfgw_post_types', array( 'post' ) ),
 	        	'post_format' 	=> 'post-format-gallery',
 	        );
-	        
-	        print_r($args);
 	
 	        $galleries = new WP_Query( $args );
 	        
