@@ -1,0 +1,111 @@
+# Copyright (C) 2010 Post Format Gallery Widget
+# This file is distributed under the same license as the Post Format Gallery Widget package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Post Format Gallery Widget 1.0\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/post-format-gallery-widget\n"
+"POT-Creation-Date: 2013-10-10 18:49:59+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#. #-#-#-#-#  post-format-gallery-widget.pot (Post Format Gallery Widget 1.0)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: post-format-gallery-widget.php:71
+msgid "Post Format Gallery Widget"
+msgstr ""
+
+#: post-format-gallery-widget.php:74
+msgid "Display images from your galleries saved under the Gallery post format."
+msgstr ""
+
+#: post-format-gallery-widget.php:281
+msgid ""
+"Your theme does not support the Gallery post format. Please change your "
+"theme or <a href=\"http://codex.wordpress.org/"
+"Post_Formats#Adding_Theme_Support\">add this support</a> to your current one "
+"so you can choose your posts."
+msgstr ""
+
+#: post-format-gallery-widget.php:298
+msgid "Title:"
+msgstr ""
+
+#: post-format-gallery-widget.php:302
+msgid "Post:"
+msgstr ""
+
+#: post-format-gallery-widget.php:313
+msgid "Select a post"
+msgstr ""
+
+#: post-format-gallery-widget.php:322
+msgid "You don't have any posts under the Gallery post format. Please add one."
+msgstr ""
+
+#: post-format-gallery-widget.php:329
+msgid "Image size:"
+msgstr ""
+
+#: post-format-gallery-widget.php:340
+msgid "Number of images to show:"
+msgstr ""
+
+#: post-format-gallery-widget.php:343
+msgid "Enter 0 for all images"
+msgstr ""
+
+#: post-format-gallery-widget.php:346
+msgid "Image links to:"
+msgstr ""
+
+#: post-format-gallery-widget.php:349
+msgid "File"
+msgstr ""
+
+#: post-format-gallery-widget.php:350
+msgid "Attachment"
+msgstr ""
+
+#: post-format-gallery-widget.php:351
+msgid "Post"
+msgstr ""
+
+#: post-format-gallery-widget.php:352
+msgid "None"
+msgstr ""
+
+#: post-format-gallery-widget.php:363
+msgid "Randomize images"
+msgstr ""
+
+#: post-format-gallery-widget.php:367
+msgid "Show captions"
+msgstr ""
+
+#: post-format-gallery-widget.php:371
+msgid "Use WordPress default gallery style"
+msgstr ""
+
+#: post-format-gallery-widget.php:375
+msgid "Number of columns:"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://github.com/eduardozulian/post-format-gallery-widget"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Display images from your galleries saved under the post format Gallery."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Eduardo Zulian"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://flutuante.com.br"
+msgstr ""
