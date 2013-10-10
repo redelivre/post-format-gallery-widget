@@ -337,7 +337,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 			</select>
 		</p>
 		<p>
-			<label for="<?php echo $this->get_field_id( 'number-images' ); ?>"><?php _e( 'Number of images to show', 'post-format-gallery-widget' ); ?>:</label>
+			<label for="<?php echo $this->get_field_id( 'number-images' ); ?>"><?php _e( 'Number of images to show:', 'post-format-gallery-widget' ); ?></label>
 			<input id="<?php echo $this->get_field_id( 'number-images' ); ?>" name="<?php echo $this->get_field_name( 'number-images' ); ?>" type="text" size="1" value="<?php echo esc_attr( $number_images ); ?>" />
 			<br />
 			<small class="description"><?php _e( 'Enter 0 for all images', 'post-format-gallery-widget' ); ?></small>
@@ -368,7 +368,7 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 		</p>
 		<p>
 			<input class="wp-use-gallery-style-checkbox" type="checkbox" id="<?php echo $this->get_field_id( 'use-gallery-style' ); ?>" name="<?php echo $this->get_field_name( 'use-gallery-style' ); ?>"<?php checked( $use_gallery_style ) ?> />
-			<label for="<?php echo $this->get_field_id( 'use-gallery-style' ); ?>"><?php _e( 'Use the WordPress default gallery style', 'post-format-gallery-widget' ); ?></label>
+			<label for="<?php echo $this->get_field_id( 'use-gallery-style' ); ?>"><?php _e( 'Use WordPress default gallery style', 'post-format-gallery-widget' ); ?></label>
 		</p>
 		<div class="wp-use-gallery-style-options">
 		<p>

@@ -8,7 +8,7 @@
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
-Display images from your galleries saved under the post format Gallery.
+Display in a widget images from your galleries saved under the post format Gallery.
 
 ## Description ##
 
