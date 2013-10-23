@@ -64,5 +64,8 @@ add_filter( 'pfgw_post_types', 'mytheme_add_post_types' );
 
 ## Changelog ##
 
+### 1.1 ###
+* Make style unique for our widget using class `.widget_post_format_gallery`
+
 ### 1.0 ###
 * First version.
