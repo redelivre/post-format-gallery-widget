@@ -3,7 +3,7 @@
 Plugin Name: Post Format Gallery Widget
 Plugin URI: http://github.com/eduardozulian/post-format-gallery-widget
 Description: Display images from your galleries saved under the post format Gallery.
-Version: 1.0
+Version: 1.1
 Author: Eduardo Zulian
 Author URI: http://flutuante.com.br
 License: GPL2
