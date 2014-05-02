@@ -168,18 +168,22 @@ class Post_Format_Gallery_Widget extends WP_Widget {
 						
 						$gallery_style = "
 						<style type='text/css'>
-							.widget_post_format_gallery #{$selector} {
+							.widget_post_format_gallery #{$selector},
+							.post-format-gallery-widget #{$selector} {
 								margin: auto;
 							}
 							
-							.widget_post_format_gallery #{$selector} .gallery-item {
+							.widget_post_format_gallery #{$selector} .gallery-item,
+							.post-format-gallery-widget #{$selector} .gallery-item {
 								float: {$float};
-								margin-top: 10px;
+								margin: 0;
+								padding: 1px;
 								text-align: center;
 								width: {$itemwidth}%;
 							}
 							
-							.widget_post_format_gallery #{$selector} .gallery-caption {
+							.widget_post_format_gallery #{$selector} .gallery-caption,
+							.post-format-gallery-widget #{$selector} .gallery-caption {
 								margin-left: 0;
 							}
 						</style>";
