@@ -10,6 +10,9 @@
 
 Display in a widget images from your galleries saved under the post format Gallery.
 
+![GitHub](https://img.shields.io/github/license/redelivre/post-format-gallery-widget.svg)
+[![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/joinchat/AHZmBhAkX_efR9za0V_J1A)
+
 ## Description ##
 
 The Post Format Gallery Widget plugin creates the possibility for you to display images from your galleries inside posts saved under the format 'Gallery'. You can select the number of images to display, the size of these images, shuffle their orders, the target of links (image file, permalink to attachment, permalink to post or maybe no linking), show captions and use one copy of the basic WordPress style for galleries, which will allow you to set up easily a number of columns.
